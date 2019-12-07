@@ -46,7 +46,8 @@ public class Device extends JFrame implements ActionListener {
 	private static JTextField occTxt = new JTextField("JOB_FIELD");
 	  
 	 //Miscellaneous
-	private File saveFile = new File("data.txt");
+	private final static String FILENAME = "./data.txt";
+	private File saveFile = new File(FILENAME);
 	private PrintWriter fileWrite = null;
 	private static BufferedReader read = null;
 	
@@ -136,69 +137,69 @@ public class Device extends JFrame implements ActionListener {
       contacts.newBtn(newName);
   }
   
-  		//Accessor Methods//
-      public static String getContactName() {
-        return nameTxt.getText(); 
-      }
+		//Accessor Methods//
+  public static String getContactName() {
+  	return nameTxt.getText(); 
+  }
       
-      public static String getPhone() {
-        return phoneTxt.getText(); 
-      }
+  public static String getPhone() {
+  	return phoneTxt.getText(); 
+  }
       
-      public static String getEmail() {
-        return emailTxt.getText(); 
-      }
+  public static String getEmail() {
+  	return emailTxt.getText(); 
+  }
       
-      public static String getAge() {
-        return ageTxt.getText(); 
-      }
+	public static String getAge() {
+		return ageTxt.getText(); 
+	}
       
-      public static String getCity() {
-        return cityTxt.getText(); 
-      }
+	public static String getCity() {
+		return cityTxt.getText(); 
+	}
       
-      public static String getBday() {
-        return bdayTxt.getText(); 
-      }
-      
-      public static String getOccupation() {
-        return occTxt.getText(); 
-      }
+	public static String getBday() {
+		return bdayTxt.getText(); 
+	}
+        
+	public static String getOccupation() {
+		return occTxt.getText(); 
+	}
   
-      	//Mutator Methods//
-      public static void setContactName(String data) {
-        nameTxt.setText(data);
-      }
+		//Mutator Methods//
+	public static void setContactName(String data) {
+		nameTxt.setText(data);
+	}
       
-      public static void setPhone(String data) {
-        phoneTxt.setText(data); 
-      }
+	public static void setPhone(String data) {
+		phoneTxt.setText(data); 
+	}
       
-      public static void setEmail(String data) {
-        emailTxt.setText(data);
-      }
+	public static void setEmail(String data) {
+		emailTxt.setText(data);
+	}
       
-      public static void setAge(String data) {
-        ageTxt.setText(data);
-      }
+	public static void setAge(String data) {
+		ageTxt.setText(data);
+	}
       
-      public static void setCity(String data) {
-        cityTxt.setText(data); 
-      }
+	public static void setCity(String data) {
+		cityTxt.setText(data); 
+	}
       
-      public static void setBday(String data) {
-        bdayTxt.setText(data); 
-      }
+	public static void setBday(String data) {
+		bdayTxt.setText(data); 
+	}
       
-      public static void setOccupation(String data) {
-        occTxt.setText(data);
-      }
+	public static void setOccupation(String data) {
+		occTxt.setText(data);
+	}
 
   //Used to retrieve the unique ID for the next contact
   private static void getID() {
     try {
       String line = "";
-      read = new BufferedReader(new FileReader("data.txt"));
+      read = new BufferedReader(new FileReader(FILENAME));
       
       while ((line = read.readLine()) != null) {
         String[] dataSplit = line.split(";");
@@ -220,9 +221,9 @@ public class Device extends JFrame implements ActionListener {
 	  
 	public static void main(String[] args) {
 		getID();
-	    contacts = new Contacts();
-	    Device device = new Device();
-	    device.setVisible(true);
-	    contacts.setVisible(true);
+		contacts = new Contacts();
+		Device device = new Device();
+		device.setVisible(true);
+		contacts.setVisible(true);
 	}
 }

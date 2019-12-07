@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,11 +21,9 @@ public class Contacts extends JFrame implements ActionListener{
   private static final long serialVersionUID = 1L;
 
   	//Text file data
-  private String[] DATA = new String[1];
-  private final int ARRAY_RESIZE = 2;
-  
-  private JButton[] buttons = new JButton[1];
-  private int buttonIndex = 0;
+  private final static String FILENAME = "./data.txt";
+  private LinkedList<String> DATA = new LinkedList<>();
+  private LinkedList<JButton> buttons = new LinkedList<>();
   
     //Bounds for window
   int xCoord = 350;
@@ -39,27 +38,13 @@ public class Contacts extends JFrame implements ActionListener{
     contacts.setLayout(new GridLayout(0,1));
 
     try {
-      readFile(new File("data.txt"));
+      readFile(new File(FILENAME));
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }
 
-    for (int i=0; i < DATA.length; i++) {
-      System.out.println(i + "," + buttonIndex);
-      if (DATA[i] != null) {
-        if (i >= buttons.length) {
-          buttons = (JButton[]) resizeArray(buttons);
-        }
-        
-        String[] dataSplit = DATA[i].split(";");
-        
-        buttons[buttonIndex] = new JButton(dataSplit[1]);
-        buttons[buttonIndex].addActionListener(this);
-        
-        this.add(buttons[buttonIndex]);
-      }
-      
-      buttonIndex ++;
+    for (JButton button : buttons) {
+    	this.add(button);
     }
     
      /**
@@ -72,7 +57,6 @@ public class Contacts extends JFrame implements ActionListener{
   }
 
   public void actionPerformed(ActionEvent event) {
-    System.out.println(buttons);
     JButton btn = (JButton) (event.getSource());
     String[] nameSplit = findName(btn.getText()).split(";");
     Device.setContactName(nameSplit[1]);
@@ -91,19 +75,15 @@ public class Contacts extends JFrame implements ActionListener{
     * least two contacts with the same name, the second one will not load.
     */
   private String findName(String nameToFind) {
-    boolean flag = false;
-    int i = 0;
     String[] nameSplit;
     
-      //Always check the null first to avoid errors
-    while (DATA[i] != null && i <= DATA.length && flag == false) {
-      nameSplit = DATA[i].split(";");
+    for (String record : DATA) {
+    	nameSplit = record.split(";");
       if (nameSplit[1].equals(nameToFind)) {
-        flag = true;
-        return DATA[i];
+        return record;
       }
-      i++;
     }
+
     return "0;NO;SUCH;CONTACT;INFORMATION;HAS;BEEN;FOUND";
   }
   
@@ -113,20 +93,16 @@ public class Contacts extends JFrame implements ActionListener{
      */
   public void newBtn(String name)
   {
-    //-1 added to ensure resize with less chance of ArrayIndexOutOfBounds error
-    if (buttonIndex >= buttons.length - 1) {
-      buttons = (JButton[]) resizeArray(buttons);
-    }
+    JButton newButton = new JButton(name);
+    newButton.addActionListener(this);
     
-    buttons[buttonIndex] = new JButton(name);
-    buttons[buttonIndex].addActionListener(this);
+    buttons.add(newButton);
     
     guiHeight += 35;
     this.setSize(guiWidth, guiHeight);
     
-    getContentPane().add(buttons[buttonIndex]);
+    getContentPane().add(newButton);
     
-    buttonIndex ++;
   }
   
   private void readFile(File data) throws FileNotFoundException {
@@ -137,51 +113,26 @@ public class Contacts extends JFrame implements ActionListener{
       line = read.readLine();
     } catch (Exception e) {
       System.err.println(e.getMessage());
+      e.printStackTrace();
     }
-    
-    int index = 0;
+
     while (line != null) {
-      DATA[index] = line;
-      index ++;
+      DATA.add(line);
       
-      	//Resize array as required;
-      if (index >= DATA.length) {
-        DATA = (String[]) resizeArray(DATA);
-      }
-      
-        //Read next line at end of loop to ensure no skipping or extra iteration
+      	//Read next line at end of loop to ensure no skipping or extra iteration
       try {
-        line = read.readLine();
-      } catch (Exception e) {
-        System.err.println(e.getMessage());
-      }
+				line = read.readLine();
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
     }
     
     try {
     	read.close();
     } catch (IOException e) {
-		System.err.println("Unable to close BufferedReader...");
+    	System.err.println("Unable to close BufferedReader...");
+    	System.err.println(e.getMessage());
     }
-  }
-
-    //Method used to return exact copy of param array but larger in size
-  private Object[] resizeArray(Object[] original) {
-    Object[] newData;
-    if (original instanceof String[]) {
-      newData = new String[original.length * ARRAY_RESIZE];
-    } else if (original instanceof JButton[]) {
-      newData = new JButton[original.length * ARRAY_RESIZE];
-    } else {
-      newData = null;
-      System.out.println("Check instance definitions");
-      System.exit(-1);
-    }
-    
-    //Copy data from original into new one
-    for (int i=0; i < original.length; i++) {
-     newData[i] = original[i]; 
-    }
-    
-    return newData;
   }
 }
