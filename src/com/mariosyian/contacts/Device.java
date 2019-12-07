@@ -50,8 +50,7 @@ public class Device extends JFrame implements ActionListener {
 	private PrintWriter fileWrite = null;
 	private static BufferedReader read = null;
 	
-	public Device()
-	{
+	public Device() {
 	  setTitle("Device");
 	    
 	  Container device = getContentPane();
@@ -87,36 +86,26 @@ public class Device extends JFrame implements ActionListener {
 	  setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	  
-  public void actionPerformed(ActionEvent event)
-  {
-    if (event.getSource() == call)
-    {
-      call.setText("PRESSED Call");
-    }
-    else if (event.getSource() == edit)
-    {
-      edit.setText("PRESSED Edit");
-    }
-    else if (event.getSource() == del)
-    {
-      del.setText("PRESSED Delete");
-    }
-    else if (event.getSource() == save)
-    {
-      try{
-        write2File();
-      } catch (Exception e) {
-        System.err.println(e);
-      }
-      save.setText("PRESSED Save");
-      resetTxtFields(nameTxt.getText());
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == call) {
+			call.setText("PRESSED Call");
+		} else if (event.getSource() == edit) {
+			edit.setText("PRESSED Edit");
+		} else if (event.getSource() == del) {
+			del.setText("PRESSED Delete");
+		} else if (event.getSource() == save) {
+			try {
+				write2File();
+			} catch (Exception e) {
+				System.err.println(e);
+			}
+			save.setText("PRESSED Save");
+			resetTxtFields(nameTxt.getText());
     }
   }
   
-  private void write2File()
-  {
-    try 
-    {
+  private void write2File() {
+    try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
       
       fileWrite.println(ID + ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
@@ -135,8 +124,7 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   
-  private void resetTxtFields(String newName)
-  {
+  private void resetTxtFields(String newName) {
       nameTxt.setText("");
       phoneTxt.setText("");
       emailTxt.setText("");
@@ -149,92 +137,74 @@ public class Device extends JFrame implements ActionListener {
   }
   
   		//Accessor Methods//
-      public static String getContactName()
-      {
+      public static String getContactName() {
         return nameTxt.getText(); 
       }
       
-      public static String getPhone()
-      {
+      public static String getPhone() {
         return phoneTxt.getText(); 
       }
       
-      public static String getEmail()
-      {
+      public static String getEmail() {
         return emailTxt.getText(); 
       }
       
-      public static String getAge()
-      {
+      public static String getAge() {
         return ageTxt.getText(); 
       }
       
-      public static String getCity()
-      {
+      public static String getCity() {
         return cityTxt.getText(); 
       }
       
-      public static String getBday()
-      {
+      public static String getBday() {
         return bdayTxt.getText(); 
       }
       
-      public static String getOccupation()
-      {
+      public static String getOccupation() {
         return occTxt.getText(); 
       }
   
       	//Mutator Methods//
-      public static void setContactName(String data)
-      {
+      public static void setContactName(String data) {
         nameTxt.setText(data);
       }
       
-      public static void setPhone(String data)
-      {
+      public static void setPhone(String data) {
         phoneTxt.setText(data); 
       }
       
-      public static void setEmail(String data)
-      {
+      public static void setEmail(String data) {
         emailTxt.setText(data);
       }
       
-      public static void setAge(String data)
-      {
+      public static void setAge(String data) {
         ageTxt.setText(data);
       }
       
-      public static void setCity(String data)
-      {
+      public static void setCity(String data) {
         cityTxt.setText(data); 
       }
       
-      public static void setBday(String data)
-      {
+      public static void setBday(String data) {
         bdayTxt.setText(data); 
       }
       
-      public static void setOccupation(String data)
-      {
+      public static void setOccupation(String data) {
         occTxt.setText(data);
       }
 
   //Used to retrieve the unique ID for the next contact
-  private static void getID()
-  {
-    try
-    {
+  private static void getID() {
+    try {
       String line = "";
       read = new BufferedReader(new FileReader("data.txt"));
-      while ((line = read.readLine()) != null)
-      {
+      
+      while ((line = read.readLine()) != null) {
         String[] dataSplit = line.split(";");
         ID = Integer.parseInt(dataSplit[0]);
       }
-      
       ID ++;
-    
     } catch (FileNotFoundException e) {
       System.out.println("File does not exist.");
     } catch (IOException e) {
@@ -245,7 +215,7 @@ public class Device extends JFrame implements ActionListener {
   }
   
   
- // Declared class-scope to be manipulated - dispose, recreate etc
+  	  // Declared class-scope to be manipulated - dispose, recreate etc
 	private static Contacts contacts; 
 	  
 	public static void main(String[] args) {
