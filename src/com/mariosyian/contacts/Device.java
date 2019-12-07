@@ -46,7 +46,7 @@ public class Device extends JFrame implements ActionListener {
 	private static JTextField occTxt = new JTextField("JOB_FIELD");
 	  
 	 //Miscellaneous
-	private final static String FILENAME = "./data.txt";
+	private final static String FILENAME = "src/com/mariosyian/contacts/data.txt";
 	private File saveFile = new File(FILENAME);
 	private PrintWriter fileWrite = null;
 	private static BufferedReader read = null;

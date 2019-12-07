@@ -21,7 +21,7 @@ public class Contacts extends JFrame implements ActionListener{
   private static final long serialVersionUID = 1L;
 
   	//Text file data
-  private final static String FILENAME = "./data.txt";
+  private final static String FILENAME = "src/com/mariosyian/contacts/data.txt";
   private LinkedList<String> DATA = new LinkedList<>();
   private LinkedList<JButton> buttons = new LinkedList<>();
   
@@ -108,6 +108,7 @@ public class Contacts extends JFrame implements ActionListener{
   private void readFile(File data) throws FileNotFoundException {
     BufferedReader read = new BufferedReader(new FileReader(data));
     String line = "";
+    String[] nameSplit;
     
     try {
       line = read.readLine();
@@ -117,7 +118,15 @@ public class Contacts extends JFrame implements ActionListener{
     }
 
     while (line != null) {
+    	// Add the new record into list
       DATA.add(line);
+      // Split to extract name
+      nameSplit = line.split(";");
+      // Create new button from data
+      JButton newBtn = new JButton(nameSplit[1]);
+      newBtn.addActionListener(this);
+      // Add it to the list
+      buttons.add(newBtn);
       
       	//Read next line at end of loop to ensure no skipping or extra iteration
       try {
