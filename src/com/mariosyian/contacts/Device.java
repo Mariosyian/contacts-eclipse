@@ -86,7 +86,17 @@ public class Device extends JFrame implements ActionListener {
 	  setBounds(50, 50, 250, 250);
 	  setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-	  
+	
+	/**
+	 * Checks which button is pressed and does appropriate action
+	 * call - TODO
+	 * edit - TODO
+	 * del - TODO
+	 * save - Write data to file and reset the text fields.
+	 * 
+	 * @param event The button that was clicked
+	 */
+	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == call) {
 			call.setText("PRESSED Call");
@@ -105,6 +115,9 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   
+	/**
+	 * Combine and write text field contents into file
+	 */
   private void write2File() {
     try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
@@ -125,6 +138,12 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   
+  /**
+   * Reset all text fields to empty and
+   * create a new button for the new contact created
+   * 
+   * @param newName Name of the new contact
+   */
   private void resetTxtFields(String newName) {
       nameTxt.setText("");
       phoneTxt.setText("");
@@ -137,36 +156,36 @@ public class Device extends JFrame implements ActionListener {
       contacts.newBtn(newName);
   }
   
-		//Accessor Methods//
+  	/*----------Mutator Methods----------*/
   public static String getContactName() {
   	return nameTxt.getText(); 
   }
-      
+
   public static String getPhone() {
   	return phoneTxt.getText(); 
   }
-      
+
   public static String getEmail() {
   	return emailTxt.getText(); 
   }
-      
+
 	public static String getAge() {
 		return ageTxt.getText(); 
 	}
-      
+
 	public static String getCity() {
 		return cityTxt.getText(); 
 	}
-      
+
 	public static String getBday() {
 		return bdayTxt.getText(); 
 	}
-        
+
 	public static String getOccupation() {
 		return occTxt.getText(); 
 	}
   
-		//Mutator Methods//
+		/*----------Mutator Methods----------*/
 	public static void setContactName(String data) {
 		nameTxt.setText(data);
 	}
@@ -195,7 +214,9 @@ public class Device extends JFrame implements ActionListener {
 		occTxt.setText(data);
 	}
 
-  //Used to retrieve the unique ID for the next contact
+  /**
+   * Used to retrieve the unique ID for the next contact
+   */
   private static void getID() {
     try {
       String line = "";
