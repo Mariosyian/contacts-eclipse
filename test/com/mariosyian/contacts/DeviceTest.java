@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
-public class ContactsTest implements ActionListener {
+public class DeviceTest implements ActionListener {
 	
 	private static Device device;
 	private static File data;
