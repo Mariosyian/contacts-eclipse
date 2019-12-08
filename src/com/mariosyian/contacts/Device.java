@@ -101,7 +101,7 @@ public class Device extends JFrame implements ActionListener {
 				System.err.println(e);
 			}
 			save.setText("PRESSED Save");
-			resetTxtFields(nameTxt.getText());
+			resetTxtFields(ID + nameTxt.getText());
     }
   }
   

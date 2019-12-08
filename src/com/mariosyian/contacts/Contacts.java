@@ -56,9 +56,11 @@ public class Contacts extends JFrame implements ActionListener{
     setDefaultCloseOperation(EXIT_ON_CLOSE);
   }
 
+  @Override
   public void actionPerformed(ActionEvent event) {
     JButton btn = (JButton) (event.getSource());
     String[] nameSplit = findName(btn.getText()).split(";");
+    
     Device.setContactName(nameSplit[1]);
     Device.setPhone(nameSplit[2]);
     Device.setEmail(nameSplit[3]);
@@ -79,7 +81,8 @@ public class Contacts extends JFrame implements ActionListener{
     
     for (String record : DATA) {
     	nameSplit = record.split(";");
-      if (nameSplit[1].equals(nameToFind)) {
+    	String current = nameSplit[0] + ":" + nameSplit[1];
+      if (current.equals(nameToFind)) {
         return record;
       }
     }
@@ -123,7 +126,7 @@ public class Contacts extends JFrame implements ActionListener{
       // Split to extract name
       nameSplit = line.split(";");
       // Create new button from data
-      JButton newBtn = new JButton(nameSplit[1]);
+      JButton newBtn = new JButton(nameSplit[0] + ":" + nameSplit[1]);
       newBtn.addActionListener(this);
       // Add it to the list
       buttons.add(newBtn);
