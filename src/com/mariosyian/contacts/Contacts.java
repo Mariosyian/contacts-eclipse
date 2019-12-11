@@ -26,12 +26,12 @@ public class Contacts extends JFrame implements ActionListener{
   private LinkedList<JButton> buttons = new LinkedList<>();
   
     //Bounds for window
-  int xCoord = 350;
-  int yCoord = 50;
+  int xCoord;
+  int yCoord;
   int guiWidth = 125;
   int guiHeight = 400;
   
-  public Contacts() {
+  public Contacts(int x, int y) {
   	setTitle("Contacts");
     Container contacts = getContentPane();
     
@@ -52,7 +52,10 @@ public class Contacts extends JFrame implements ActionListener{
       * setBounds allows to set absolute size of window
       * x, y, width, height
       */
+    this.xCoord = x + 25;
+    this.yCoord = y;
     setBounds(xCoord, yCoord, guiWidth, guiHeight);
+    setResizable(false);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
   }
 

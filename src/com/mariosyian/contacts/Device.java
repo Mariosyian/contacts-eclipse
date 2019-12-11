@@ -19,24 +19,25 @@ public class Device extends JFrame implements ActionListener {
 	private static int ID = 0;
 	 
 	/*----------Widgets----------*/
-	  //Labels
-	private JLabel name = new JLabel("Name:");
-	private JLabel phone = new JLabel("Phone:");
-	private JLabel email = new JLabel("EMail:");
-	private JLabel age = new JLabel("Age:");
-	private JLabel city = new JLabel("City:");
-	private JLabel bday = new JLabel("Birthday:");
-	private JLabel occupation = new JLabel("Occupation:");
+	  // Labels
+	private JLabel nameLabel = new JLabel("Name:");
+	private JLabel phoneLabel = new JLabel("Phone:");
+	private JLabel emailLabel = new JLabel("EMail:");
+	private JLabel ageLabel = new JLabel("Age:");
+	private JLabel cityLabel = new JLabel("City:");
+	private JLabel bdayLabel = new JLabel("Birthday:");
+	private JLabel occupationLabel = new JLabel("Occupation:");
 	  
-	  //Buttons
-	private JButton save = new JButton("Save");
-	private JButton edit = new JButton("Edit");
-	private JButton call = new JButton("Call");
-	private JButton del = new JButton("Delete");
-	  //Layouts
+	  // Buttons
+	private JButton saveBtn = new JButton("Save");
+	private JButton editBtn = new JButton("Edit");
+	private JButton callBtn = new JButton("Call");
+	private JButton delBtn = new JButton("Delete");
+	
+		// Layouts
 	GridLayout mainGrid = new GridLayout(0,2);
 	
-	  //Text Fields
+	  // Text Fields
 	private static JTextField nameTxt = new JTextField("NAME_FIELD");
 	private static JTextField phoneTxt = new JTextField("PHONE_FIELD");
 	private static JTextField emailTxt = new JTextField("EMAIL_FIELD");
@@ -45,7 +46,7 @@ public class Device extends JFrame implements ActionListener {
 	private static JTextField bdayTxt = new JTextField("BDAY_FIELD");
 	private static JTextField occTxt = new JTextField("JOB_FIELD");
 	  
-	 //Miscellaneous
+		// Miscellaneous
 	private final static String FILENAME = "src/com/mariosyian/contacts/data.txt";
 	private File saveFile = new File(FILENAME);
 	private PrintWriter fileWrite = null;
@@ -57,33 +58,37 @@ public class Device extends JFrame implements ActionListener {
 	  Container device = getContentPane();
 	  device.setLayout(mainGrid);
 	     
-	  device.add(name);
+	  device.add(nameLabel);
 	  device.add(nameTxt);
-	  device.add(phone);
+	  device.add(phoneLabel);
 	  device.add(phoneTxt);
-	  device.add(email);
+	  device.add(emailLabel);
 	  device.add(emailTxt);
-	  device.add(age);
+	  device.add(ageLabel);
 	  device.add(ageTxt);
-	  device.add(city);
+	  device.add(cityLabel);
 	  device.add(cityTxt);
-	  device.add(bday);
+	  device.add(bdayLabel);
 	  device.add(bdayTxt);
-	  device.add(occupation);
+	  device.add(occupationLabel);
 	  device.add(occTxt);
 	    
-	  device.add(save);
-	  device.add(edit);
-	  device.add(call);
-	  device.add(del);
-	    
-	  save.addActionListener(this);
-	  call.addActionListener(this);
-	  edit.addActionListener(this);
-	  del.addActionListener(this);
-	    
-	    //x, y, width, height
-	  setBounds(50, 50, 250, 250);
+	  device.add(saveBtn);
+	  device.add(editBtn);
+	  device.add(callBtn);
+	  device.add(delBtn);
+	  
+	  saveBtn.addActionListener(this);
+	  callBtn.addActionListener(this);
+	  editBtn.addActionListener(this);
+	  delBtn.addActionListener(this);
+	  
+	  enableTxtFields(false);
+	  
+	    // x, y, width, height
+	  setBounds(50, 50, 500, 250);
+	  	// Fixed size
+	  setResizable(false);
 	  setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
@@ -98,21 +103,45 @@ public class Device extends JFrame implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() == call) {
-			call.setText("PRESSED Call");
-		} else if (event.getSource() == edit) {
-			edit.setText("PRESSED Edit");
-		} else if (event.getSource() == del) {
-			del.setText("PRESSED Delete");
-		} else if (event.getSource() == save) {
-			try {
-				write2File();
-			} catch (Exception e) {
-				System.err.println(e);
-			}
-			save.setText("PRESSED Save");
-			resetTxtFields(ID + nameTxt.getText());
-    }
+		JButton source = null;
+		if (event.getSource() instanceof JButton) {
+			source = (JButton) event.getSource();
+		} else {
+			System.err.println("This is not a JButton...");
+			return;
+		}
+		
+		switch (source.getText()) {
+			case "Call":
+				callBtn.setText("PRESSED Call");
+				break;
+			
+			case "Edit":
+				enableTxtFields(true);
+				editBtn.setText("Finish edit");
+				break;
+				
+			case "Finish edit":
+				enableTxtFields(false);
+				editBtn.setText("Edit");
+				break;
+				
+			case "Delete":
+				delBtn.setText("PRESSED Delete");
+				break;
+			
+			case "Save":
+				try {
+					write2File();
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+				resetTxtFields(ID + ":" + nameTxt.getText());
+				break;
+			
+			default:
+				System.err.println("Source [" + source.getText() + "] is not recognised.");
+		}
   }
   
 	/**
@@ -136,6 +165,20 @@ public class Device extends JFrame implements ActionListener {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+  }
+  
+  /**
+   * Enables or disables text fields
+   * @param enable True to enable, false to disable text fields
+   */
+  private void enableTxtFields(boolean enable) {
+	  nameTxt.setEnabled(enable);
+	  phoneTxt.setEnabled(enable);
+	  emailTxt.setEnabled(enable);
+	  ageTxt.setEnabled(enable);
+	  cityTxt.setEnabled(enable);
+	  bdayTxt.setEnabled(enable);
+	  occTxt.setEnabled(enable);
   }
   
   /**
@@ -236,15 +279,14 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   
-  
   	  // Declared class-scope to be manipulated - dispose, recreate etc
 	private static Contacts contacts; 
 	  
 	public static void main(String[] args) {
 		getID();
-		contacts = new Contacts();
 		Device device = new Device();
 		device.setVisible(true);
+		contacts = new Contacts(device.getX() + device.getWidth(), device.getY());
 		contacts.setVisible(true);
 	}
 }
