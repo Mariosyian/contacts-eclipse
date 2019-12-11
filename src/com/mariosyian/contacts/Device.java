@@ -51,6 +51,7 @@ public class Device extends JFrame implements ActionListener {
 	private File saveFile = new File(FILENAME);
 	private PrintWriter fileWrite = null;
 	private static BufferedReader read = null;
+	private String previousContact = "";
 	
 	public Device() {
 	  setTitle("Device");
@@ -119,11 +120,13 @@ public class Device extends JFrame implements ActionListener {
 			case "Edit":
 				enableTxtFields(true);
 				editBtn.setText("Finish edit");
+				previousContact = getTxtFieldInfo();
 				break;
 				
 			case "Finish edit":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
+				contacts.updateContact(previousContact, getTxtFieldInfo());
 				break;
 				
 			case "Delete":
@@ -151,10 +154,7 @@ public class Device extends JFrame implements ActionListener {
     try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
       
-      fileWrite.println(ID + ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
-                        emailTxt.getText()  + ";" + ageTxt.getText()  + ";" +
-                        cityTxt.getText()  + ";" + bdayTxt.getText()  + ";" +
-                        occTxt.getText());
+      fileWrite.println(getTxtFieldInfo());
       ID ++;
       
       fileWrite.close();
@@ -165,6 +165,16 @@ public class Device extends JFrame implements ActionListener {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+  }
+  
+  /**
+   * @return String Returns all text field inputs as one ';' separated string.
+   */
+  private String getTxtFieldInfo() {
+  	return ID + ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
+        emailTxt.getText()  + ";" + ageTxt.getText()  + ";" +
+        cityTxt.getText()  + ";" + bdayTxt.getText()  + ";" +
+        occTxt.getText();
   }
   
   /**

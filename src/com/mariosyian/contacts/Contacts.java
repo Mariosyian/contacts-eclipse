@@ -150,4 +150,22 @@ public class Contacts extends JFrame implements ActionListener{
     	System.err.println(e.getMessage());
     }
   }
+  
+  /**
+   * TODO:
+   * Deletes old contact from dataList / buttonList / GUI
+   * Adds new one with ?same? ID
+   * @param oldContact Contact to be removed
+   * @param newContact Contact to be added
+   */
+  public void updateContact(String oldContact, String newContact) {
+  	if (DATA.contains(oldContact)) {
+  		String[] split = oldContact.split(";");
+  		DATA.remove(Integer.parseInt(split[0]));
+  		DATA.add(newContact);
+  		
+  		split = newContact.split(";");
+  		newBtn(split[0] + ":" + split[1]);
+  	}
+  }
 }
