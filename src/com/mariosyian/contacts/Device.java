@@ -8,6 +8,9 @@ package com.mariosyian.contacts;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.sql.Date;
+import java.util.Calendar;
+
 import javax.swing.*;
 
 public class Device extends JFrame implements ActionListener {
@@ -43,7 +46,7 @@ public class Device extends JFrame implements ActionListener {
 	private static JTextField emailTxt = new JTextField("EMAIL_FIELD");
 	private static JTextField ageTxt = new JTextField("AGE_FIELD");
 	private static JTextField cityTxt = new JTextField("CITY_FIELD");
-	private static JTextField bdayTxt = new JTextField("BDAY_FIELD");
+	private static JTextField bdayTxt = new JTextField("yyyy-mm-dd");
 	private static JTextField occTxt = new JTextField("JOB_FIELD");
 	  
 		// Miscellaneous
@@ -104,6 +107,12 @@ public class Device extends JFrame implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		// Validate inputs before doing anything
+		enableTxtFields(true);
+		if (!isValidInput()) {
+			return;
+		}
+		
 		JButton source = null;
 		if (event.getSource() instanceof JButton) {
 			source = (JButton) event.getSource();
@@ -193,7 +202,7 @@ public class Device extends JFrame implements ActionListener {
   
   /**
    * Reset all text fields to empty and
-   * create a new button for the new contact created
+   * create a new button for the new contact created.
    * 
    * @param newName Name of the new contact
    */
@@ -208,6 +217,114 @@ public class Device extends JFrame implements ActionListener {
       
       contacts.newBtn(newName);
   }
+  
+  /**
+   * Checks that all text field entries are valid.
+   * Checks are made as follows:
+   * Name - Not null
+   * Phone - All numerics TODO: Add extension support
+   * EMail - username and domain separated by @ and finishes with .com TODO: Recognise common domains
+   * Age - Is numeric, non negative TODO: Compare against birthday
+   * City - Not null TODO: Should this be an optional entry?
+   * Birthday - Is valid date, ensure its not after todays date
+   * Occupation - Not null TODO: Should this be an optional entry?
+   * @return boolean True if all checks pass, false otherwise.
+   */
+  private boolean isValidInput() {
+  	// Name
+  	if (getContactName().length() <= 0) {
+  		System.err.println("Name can not be left null.");
+  		return false;
+  	}
+  	
+  	// Phone
+  	try {
+  		int phone = Integer.parseInt(getPhone());
+  		if (phone <= 0) {
+  			throw new Exception();
+  		}
+  	} catch (Exception e) {
+  		System.err.println("This is not a valid phone number.");
+  		return false;
+  	}
+  	
+  	// Should this be its own method?? Too long
+  	// EMail
+  	// Consider marios@hotmail.com
+  	if (!getEmail().contains("@")) {
+  		System.err.println("This is not a valid email.");
+  		return false;
+  	} else {
+  		String[] email = getEmail().split("@");
+  		// Checks if @hotmail.com
+  		if (email[0].length() == 0) {
+  			System.err.println("The email username can not be null.");
+    		return false;
+    	// Checks if marios@
+  		} else if (email.length < 2 && email[1].length() == 0) {
+  			System.err.println("The email domain address can not be null.");
+	  		return false;
+  		} else {
+  			// Checks if marios@hotmail | marios@hotmailcom
+  			if (!email[1].contains(".")) {
+  				System.err.println("This is not a valid domain address.");
+  	  		return false;
+  			}
+  			String[] domain = email[1].split(".");
+  			// Checks if marios@.com
+  			/*----- TODO: Check for more than one '.' e.g. student.university.ac.uk -----*/
+//  			if (domain.length < 1 && domain[0].length() == 0) {
+//  				System.err.println("The domain address can not be null.");
+//  	  		return false;
+//  	  	// Checks if marios@hotmail.
+//  			} else if (domain.length < 2 && domain[1].length() == 0) {
+//  				System.err.println("The domain extension can not be null.");
+//  	  		return false;
+//  			}
+  		}
+  	}
+  	
+  	// Age
+  	try {
+  		int age = Integer.parseInt(getAge());
+  		if (age <= 0) {
+  			throw new Exception();
+  		}
+  	} catch (Exception e) {
+  		System.err.println("This is not a valid phone number.");
+  		return false;
+  	}
+  	
+  	// City
+   	if (getCity().length() <= 0) {
+   		System.err.println("City name can not be left empty ... for now.");
+   		return false;
+   	}
+   	
+   	// Birthday
+   	try {
+   		Date bday = Date.valueOf(getBday());
+   		// Check if date entered is after todays date
+   		if (bday.after(Calendar.getInstance().getTime())) {
+   			throw new IllegalArgumentException();
+   		}
+   	} catch (IllegalArgumentException e) {
+   		System.err.println("The date of birth can not be later than today.");
+   		return false;
+   	} catch (Exception e) {
+   		System.err.println("This is not a valid yyyy-mm-dd format date.");
+   		return false;
+   	}
+   	
+   	// Occupation
+   	if (getOccupation().length() <= 0) {
+   		System.err.println("Occupation can not be left null.");
+   		return false;
+   	}
+   	
+  	return true;
+  }
+  
   
   	/*----------Mutator Methods----------*/
   public static String getContactName() {
