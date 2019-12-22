@@ -46,7 +46,7 @@ public class Device extends JFrame implements ActionListener {
 	private static JTextField emailTxt = new JTextField("EMAIL_FIELD");
 	private static JTextField ageTxt = new JTextField("AGE_FIELD");
 	private static JTextField cityTxt = new JTextField("CITY_FIELD");
-	private static JTextField bdayTxt = new JTextField("yyyy-mm-dd");
+	private static JTextField bdayTxt = new JTextField("YYYY-MM-DD");
 	private static JTextField occTxt = new JTextField("JOB_FIELD");
 	  
 		// Miscellaneous
@@ -109,9 +109,6 @@ public class Device extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		// Validate inputs before doing anything
 		enableTxtFields(true);
-		if (!isValidInput()) {
-			return;
-		}
 		
 		JButton source = null;
 		if (event.getSource() instanceof JButton) {
@@ -135,20 +132,22 @@ public class Device extends JFrame implements ActionListener {
 			case "Finish edit":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
+				if (!isValidInput()) { return; } // Validate Input
 				contacts.updateContact(previousContact, getTxtFieldInfo());
 				break;
 				
 			case "Delete":
-				delBtn.setText("PRESSED Delete");
+				resetTxtFields(ID + ":" + nameTxt.getText(), false);
 				break;
 			
 			case "Save":
+				if (!isValidInput()) { return; } // Validate Input
 				try {
 					write2File();
 				} catch (Exception e) {
 					System.err.println(e);
 				}
-				resetTxtFields(ID + ":" + nameTxt.getText());
+				resetTxtFields(ID + ":" + nameTxt.getText(), true);
 				break;
 			
 			default:
@@ -157,10 +156,11 @@ public class Device extends JFrame implements ActionListener {
   }
   
 	/**
+	 * TODO: Call from everywhere or make new updateFile(LinkedList<>) {} ?????? -- see method below
 	 * Combine and write text field contents into file
 	 */
   private void write2File() {
-    try {
+  	try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
       
       fileWrite.println(getTxtFieldInfo());
@@ -176,6 +176,30 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   
+  /**
+   * Delete a listing from the file.
+   * ID is left blank.
+   * @param leaveOut Instance to delete from file.
+   */
+  public void deleteFromFile(String leaveOut) {
+  	try {
+  		read = new BufferedReader(new FileReader(FILENAME));
+      fileWrite = new PrintWriter(new FileWriter(saveFile, false));
+      String line ="";
+      // If not line looking for, write back to file.
+      while ((line = read.readLine()) != null && !line.equals(leaveOut)) {
+        fileWrite.println(getTxtFieldInfo());
+      }      
+      fileWrite.close();
+      read.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("No such file found!");
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
   /**
    * @return String Returns all text field inputs as one ';' separated string.
    */
@@ -205,8 +229,9 @@ public class Device extends JFrame implements ActionListener {
    * create a new button for the new contact created.
    * 
    * @param newName Name of the new contact
+   * @param create True if newBtn, false for deleteBtn
    */
-  private void resetTxtFields(String newName) {
+  private void resetTxtFields(String newName, boolean create) {
       nameTxt.setText("");
       phoneTxt.setText("");
       emailTxt.setText("");
@@ -215,7 +240,11 @@ public class Device extends JFrame implements ActionListener {
       bdayTxt.setText("");
       occTxt.setText("");
       
-      contacts.newBtn(newName);
+      if (create) {
+      	contacts.newBtn(newName);
+      } else {
+      	contacts.deleteBtn(newName);
+      }
   }
   
   /**
@@ -239,7 +268,7 @@ public class Device extends JFrame implements ActionListener {
   	
   	// Phone
   	try {
-  		int phone = Integer.parseInt(getPhone());
+  		long phone = Long.parseLong(getPhone());
   		if (phone <= 0) {
   			throw new Exception();
   		}
@@ -270,7 +299,7 @@ public class Device extends JFrame implements ActionListener {
   				System.err.println("This is not a valid domain address.");
   	  		return false;
   			}
-  			String[] domain = email[1].split(".");
+//  			String[] domain = email[1].split(".");
   			// Checks if marios@.com
   			/*----- TODO: Check for more than one '.' e.g. student.university.ac.uk -----*/
 //  			if (domain.length < 1 && domain[0].length() == 0) {
@@ -304,10 +333,16 @@ public class Device extends JFrame implements ActionListener {
    	// Birthday
    	try {
    		Date bday = Date.valueOf(getBday());
+   		Calendar cal = Calendar.getInstance();
    		// Check if date entered is after todays date
-   		if (bday.after(Calendar.getInstance().getTime())) {
+   		if (bday.after(cal.getTime())) {
    			throw new IllegalArgumentException();
    		}
+   		// TODO Check if date of birth matches age
+//   		int currentYear = cal.get(Calendar.YEAR);
+//   		int currentMonth = cal.get(Calendar.MONTH) + 1; // +1 because programming jokes start from 0
+//   		int currentDay = cal.get(Calendar.DAY_OF_MONTH);
+   		
    	} catch (IllegalArgumentException e) {
    		System.err.println("The date of birth can not be later than today.");
    		return false;
@@ -411,6 +446,13 @@ public class Device extends JFrame implements ActionListener {
 	  
 	public static void main(String[] args) {
 		getID();
+		// Try to change look and feel to Windows Classic layout ** See documentation **
+		try { 
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	  } 
+	  catch (Exception e) { 
+	  	System.out.println("Look and Feel not set"); 
+	  } 
 		Device device = new Device();
 		device.setVisible(true);
 		contacts = new Contacts(device.getX() + device.getWidth(), device.getY());

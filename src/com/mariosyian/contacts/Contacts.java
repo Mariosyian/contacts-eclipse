@@ -23,7 +23,7 @@ public class Contacts extends JFrame implements ActionListener{
   	//Text file data
   private final static String FILENAME = "src/com/mariosyian/contacts/data.txt";
   private LinkedList<String> DATA = new LinkedList<>();
-  private LinkedList<JButton> buttons = new LinkedList<>();
+  private LinkedList<JButton> BUTTONS = new LinkedList<>();
   
     //Bounds for window
   int xCoord;
@@ -43,7 +43,7 @@ public class Contacts extends JFrame implements ActionListener{
       System.err.println(e.getMessage());
     }
 
-    for (JButton button : buttons) {
+    for (JButton button : BUTTONS) {
     	this.add(button);
     }
     
@@ -93,24 +93,43 @@ public class Contacts extends JFrame implements ActionListener{
     return "0;NO;SUCH;CONTACT;INFORMATION;HAS;BEEN;FOUND";
   }
   
-    /**
-     * Method used to create any new buttons during runtime of program
-     * @param name Button text to display
-     */
+  /**
+   * Method used to create any new buttons during runtime of program
+   * @param name Button text to display
+   */
   public void newBtn(String name)
   {
     JButton newButton = new JButton(name);
     newButton.addActionListener(this);
     
-    buttons.add(newButton);
+    BUTTONS.add(newButton);
     
     guiHeight += 35;
     this.setSize(guiWidth, guiHeight);
     
     getContentPane().add(newButton);
-    
   }
   
+  /**
+   * TODO: contains() doesn't work
+   * Method used to create any new buttons during runtime of program
+   * @param name Button text to display
+   */
+	public void deleteBtn(String name)
+	{
+	  JButton newButton = new JButton(name);
+
+	  if (BUTTONS.contains(newButton)) {
+//	  	System.out.println(BUTTONS);
+	  	BUTTONS.remove(newButton);
+//	  	System.out.println(BUTTONS);
+	  }
+	  deleteContact(name);
+//	  guiHeight -= 35;
+//	  this.setSize(guiWidth, guiHeight);
+	  
+	  getContentPane().remove(newButton);
+	}
   private void readFile(File data) throws FileNotFoundException {
     BufferedReader read = new BufferedReader(new FileReader(data));
     String line = "";
@@ -132,7 +151,7 @@ public class Contacts extends JFrame implements ActionListener{
       JButton newBtn = new JButton(nameSplit[0] + ":" + nameSplit[1]);
       newBtn.addActionListener(this);
       // Add it to the list
-      buttons.add(newBtn);
+      BUTTONS.add(newBtn);
       
       	//Read next line at end of loop to ensure no skipping or extra iteration
       try {
@@ -152,7 +171,7 @@ public class Contacts extends JFrame implements ActionListener{
   }
   
   /**
-   * TODO:
+   * TODO
    * Deletes old contact from dataList / buttonList / GUI
    * Adds new one with ?same? ID
    * @param oldContact Contact to be removed
@@ -166,6 +185,21 @@ public class Contacts extends JFrame implements ActionListener{
   		
   		split = newContact.split(";");
   		newBtn(split[0] + ":" + split[1]);
+  	}
+  }
+  
+  /**
+   * TODO: contains() doesn't work
+   * Deletes a contact from the list.
+   * ID remains empty.
+   * @param contact Contact to be removed
+   */
+  private void deleteContact(String contact) {
+  	if (DATA.contains(contact)) {
+  		System.out.println(DATA);
+  		DATA.remove(contact);
+  		System.out.println(DATA);
+//  		Device.deleteFromFile(contact); -- why static???
   	}
   }
 }
