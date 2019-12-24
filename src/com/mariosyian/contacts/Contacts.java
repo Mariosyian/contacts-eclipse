@@ -63,7 +63,8 @@ public class Contacts extends JFrame implements ActionListener{
   public void actionPerformed(ActionEvent event) {
     JButton btn = (JButton) (event.getSource());
     String[] nameSplit = findName(btn.getText()).split(";");
-    
+
+    Device.setIDLabel(nameSplit[0]);
     Device.setContactName(nameSplit[1]);
     Device.setPhone(nameSplit[2]);
     Device.setEmail(nameSplit[3]);
@@ -102,12 +103,19 @@ public class Contacts extends JFrame implements ActionListener{
     JButton newButton = new JButton(name);
     newButton.addActionListener(this);
     
-    BUTTONS.add(newButton);
+//    BUTTONS.add(newButton); -- Button is added in readFile()
     
     guiHeight += 35;
     this.setSize(guiWidth, guiHeight);
     
     getContentPane().add(newButton);
+    
+    // Read data file again to update DATA list
+    try {
+			readFile(new File(FILENAME));
+		} catch (FileNotFoundException e) {
+			System.err.println("File: " + FILENAME + ". Was not found.");
+		}
   }
   
   /**
@@ -117,23 +125,23 @@ public class Contacts extends JFrame implements ActionListener{
    */
 	public void deleteBtn(String name)
 	{
-	  JButton newButton = new JButton(name);
-
-	  if (BUTTONS.contains(newButton)) {
-//	  	System.out.println(BUTTONS);
-	  	BUTTONS.remove(newButton);
-//	  	System.out.println(BUTTONS);
-	  }
-	  deleteContact(name);
-//	  guiHeight -= 35;
-//	  this.setSize(guiWidth, guiHeight);
-	  
-	  getContentPane().remove(newButton);
+    for (JButton button : BUTTONS) {
+      if (button.getText().equals(name)) {
+        BUTTONS.remove(button);
+        getContentPane().remove(button);
+        deleteContact(name);
+        guiHeight -= 35;
+        this.setSize(guiWidth, guiHeight);
+        break;
+      }
+    }	  
 	}
   private void readFile(File data) throws FileNotFoundException {
     BufferedReader read = new BufferedReader(new FileReader(data));
     String line = "";
     String[] nameSplit;
+    DATA.clear();
+    BUTTONS.clear();
     
     try {
       line = read.readLine();
@@ -172,19 +180,20 @@ public class Contacts extends JFrame implements ActionListener{
   
   /**
    * TODO
-   * Deletes old contact from dataList / buttonList / GUI
-   * Adds new one with ?same? ID
+   * Replace old contact from dataList / buttonList / GUI with new data and new ID??
    * @param oldContact Contact to be removed
    * @param newContact Contact to be added
    */
   public void updateContact(String oldContact, String newContact) {
-  	if (DATA.contains(oldContact)) {
-  		String[] split = oldContact.split(";");
-  		DATA.remove(Integer.parseInt(split[0]));
-  		DATA.add(newContact);
-  		
-  		split = newContact.split(";");
-  		newBtn(split[0] + ":" + split[1]);
+  	for (String data : DATA) {
+  		if (data.equals(oldContact)) {
+	  		String[] split = oldContact.split(";");
+	  		DATA.remove(Integer.parseInt(split[0]));
+	  		DATA.add(newContact);
+	  		
+	  		split = newContact.split(";");
+	  		newBtn(split[0] + ":" + split[1]);
+  		}
   	}
   }
   
@@ -195,11 +204,14 @@ public class Contacts extends JFrame implements ActionListener{
    * @param contact Contact to be removed
    */
   private void deleteContact(String contact) {
-  	if (DATA.contains(contact)) {
-  		System.out.println(DATA);
-  		DATA.remove(contact);
-  		System.out.println(DATA);
-//  		Device.deleteFromFile(contact); -- why static???
-  	}
+  	String[] nameSplit;
+    for (String record : DATA) {
+    	nameSplit = record.split(";");
+    	String current = nameSplit[0] + ":" + nameSplit[1];
+      if (current.equals(contact)) {
+        DATA.remove(record);
+        break;
+      }
+    }
   }
 }

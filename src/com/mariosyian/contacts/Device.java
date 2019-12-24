@@ -5,13 +5,26 @@ package com.mariosyian.contacts;
  * directory as the JAVA Source File.
 */
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.LinkedList;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class Device extends JFrame implements ActionListener {
 	/**
@@ -30,6 +43,7 @@ public class Device extends JFrame implements ActionListener {
 	private JLabel cityLabel = new JLabel("City:");
 	private JLabel bdayLabel = new JLabel("Birthday:");
 	private JLabel occupationLabel = new JLabel("Occupation:");
+	private static JLabel IDLbl = new JLabel();
 	  
 	  // Buttons
 	private JButton saveBtn = new JButton("Save");
@@ -61,7 +75,9 @@ public class Device extends JFrame implements ActionListener {
 	    
 	  Container device = getContentPane();
 	  device.setLayout(mainGrid);
-	     
+
+	  IDLbl.setVisible(false);
+	  
 	  device.add(nameLabel);
 	  device.add(nameTxt);
 	  device.add(phoneLabel);
@@ -126,18 +142,20 @@ public class Device extends JFrame implements ActionListener {
 			case "Edit":
 				enableTxtFields(true);
 				editBtn.setText("Finish edit");
-				previousContact = getTxtFieldInfo();
+				previousContact = IDLbl.getText() + getTxtFieldInfo();
 				break;
 				
 			case "Finish edit":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
 				if (!isValidInput()) { return; } // Validate Input
-				contacts.updateContact(previousContact, getTxtFieldInfo());
+				//TODO: Breaks program
+				contacts.updateContact(previousContact, ID + getTxtFieldInfo());
 				break;
 				
 			case "Delete":
-				resetTxtFields(ID + ":" + nameTxt.getText(), false);
+				deleteFromFile(IDLbl.getText() + getTxtFieldInfo());
+				resetTxtFields(IDLbl.getText() + ":" + nameTxt.getText(), false);
 				break;
 			
 			case "Save":
@@ -162,10 +180,7 @@ public class Device extends JFrame implements ActionListener {
   private void write2File() {
   	try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
-      
-      fileWrite.println(getTxtFieldInfo());
-      ID ++;
-      
+      fileWrite.println(ID + getTxtFieldInfo());
       fileWrite.close();
     } catch (FileNotFoundException e) {
       System.out.println("No such file found!");
@@ -184,14 +199,21 @@ public class Device extends JFrame implements ActionListener {
   public void deleteFromFile(String leaveOut) {
   	try {
   		read = new BufferedReader(new FileReader(FILENAME));
-      fileWrite = new PrintWriter(new FileWriter(saveFile, false));
+  		LinkedList<String> tempData = new LinkedList<String>();
       String line ="";
-      // If not line looking for, write back to file.
-      while ((line = read.readLine()) != null && !line.equals(leaveOut)) {
-        fileWrite.println(getTxtFieldInfo());
-      }      
-      fileWrite.close();
+      // Read desired records into a list since file is reopened with append = false
+      while ((line = read.readLine()) != null) {
+      	if (!line.equals(leaveOut)) {
+      		tempData.add(line);
+      	}
+      }
       read.close();
+      // Rewrite data back to file
+      fileWrite = new PrintWriter(new FileWriter(saveFile, false));
+      for (String record : tempData) {
+      	fileWrite.println(record);
+      }
+      fileWrite.close();
     } catch (FileNotFoundException e) {
       System.out.println("No such file found!");
     } catch (IOException e) {
@@ -201,10 +223,11 @@ public class Device extends JFrame implements ActionListener {
     }
   }
   /**
-   * @return String Returns all text field inputs as one ';' separated string.
+   * TODO: Should I leave the ID here? Should I make new method one with getWithID and leave this as is?
+   * @return String Returns all text field inputs as one ';' separated string WITHOUT ID.
    */
   private String getTxtFieldInfo() {
-  	return ID + ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
+  	return ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
         emailTxt.getText()  + ";" + ageTxt.getText()  + ";" +
         cityTxt.getText()  + ";" + bdayTxt.getText()  + ";" +
         occTxt.getText();
@@ -232,19 +255,22 @@ public class Device extends JFrame implements ActionListener {
    * @param create True if newBtn, false for deleteBtn
    */
   private void resetTxtFields(String newName, boolean create) {
-      nameTxt.setText("");
-      phoneTxt.setText("");
-      emailTxt.setText("");
-      ageTxt.setText("");
-      cityTxt.setText("");
-      bdayTxt.setText("");
-      occTxt.setText("");
+  	IDLbl.setText("" + ID);
+    nameTxt.setText("");
+    phoneTxt.setText("");
+    emailTxt.setText("");
+    ageTxt.setText("");
+    cityTxt.setText("");
+    bdayTxt.setText("");
+    occTxt.setText("");
       
-      if (create) {
-      	contacts.newBtn(newName);
-      } else {
-      	contacts.deleteBtn(newName);
-      }
+    if (create) {
+    	contacts.newBtn(newName);
+    } else {
+    	contacts.deleteBtn(newName);
+    }
+      
+    ID ++; // Increment ID after writing to file and creating the new button
   }
   
   /**
@@ -362,6 +388,10 @@ public class Device extends JFrame implements ActionListener {
   
   
   	/*----------Mutator Methods----------*/
+  public static String getIDLabel() {
+  	return IDLbl.getText();
+  }
+  
   public static String getContactName() {
   	return nameTxt.getText(); 
   }
@@ -391,6 +421,10 @@ public class Device extends JFrame implements ActionListener {
 	}
   
 		/*----------Mutator Methods----------*/
+	public static void setIDLabel(String data) {
+		IDLbl.setText(data);
+	}
+	
 	public static void setContactName(String data) {
 		nameTxt.setText(data);
 	}
