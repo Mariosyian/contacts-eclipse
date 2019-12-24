@@ -1,3 +1,4 @@
 0;mario;07525057118;marios.yiannakou@student.manchester.ac.uk;21;Manchester;1998-01-03;Student
 1;mario;96480448;marios.yiannakou@hotmail.com;21;Nicosia;1998-01-03;Student
-2;NAME_FIELD;PHONE_FIELD;EMAIL_FIELD;AGE_FIELD;CITY_FIELD;BDAY_FIELD;JOB_FIELD
+5;NAME_FIELD;123;sth@hotmail.com;15;CITY_FIELD;1998-01-01;JOB_FIELD
+8;NAME_FIELD;123;sth@asdsad.asd;15;CITY_FIELD;1998-01-01;JOB_FIELD

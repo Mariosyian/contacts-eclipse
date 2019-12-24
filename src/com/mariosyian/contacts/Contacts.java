@@ -75,10 +75,8 @@ public class Contacts extends JFrame implements ActionListener{
   }
   
    /**
-    * TODO:
-    * Method used to return the data of the button from the DATA array
-    * This method will return the FIRST occurence so if there are at
-    * least two contacts with the same name, the second one will not load.
+    * Method used to return the data of the button from the DATA array.
+    * @return String Complete record as one ';' separated String, hard coded data if not found.
     */
   private String findName(String nameToFind) {
     String[] nameSplit;
@@ -106,8 +104,7 @@ public class Contacts extends JFrame implements ActionListener{
 //    BUTTONS.add(newButton); -- Button is added in readFile()
     
     guiHeight += 35;
-    this.setSize(guiWidth, guiHeight);
-    
+    this.setSize(guiWidth, guiHeight);    
     getContentPane().add(newButton);
     
     // Read data file again to update DATA list
@@ -119,9 +116,8 @@ public class Contacts extends JFrame implements ActionListener{
   }
   
   /**
-   * TODO: contains() doesn't work
-   * Method used to create any new buttons during runtime of program
-   * @param name Button text to display
+   * Deletes JButton object with specified name
+   * @param name Text of JButton to delete
    */
 	public void deleteBtn(String name)
 	{
@@ -179,28 +175,7 @@ public class Contacts extends JFrame implements ActionListener{
   }
   
   /**
-   * TODO
-   * Replace old contact from dataList / buttonList / GUI with new data and new ID??
-   * @param oldContact Contact to be removed
-   * @param newContact Contact to be added
-   */
-  public void updateContact(String oldContact, String newContact) {
-  	for (String data : DATA) {
-  		if (data.equals(oldContact)) {
-	  		String[] split = oldContact.split(";");
-	  		DATA.remove(Integer.parseInt(split[0]));
-	  		DATA.add(newContact);
-	  		
-	  		split = newContact.split(";");
-	  		newBtn(split[0] + ":" + split[1]);
-  		}
-  	}
-  }
-  
-  /**
-   * TODO: contains() doesn't work
-   * Deletes a contact from the list.
-   * ID remains empty.
+   * Deletes a contact record from the list.
    * @param contact Contact to be removed
    */
   private void deleteContact(String contact) {

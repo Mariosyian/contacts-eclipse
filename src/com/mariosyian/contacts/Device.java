@@ -116,7 +116,7 @@ public class Device extends JFrame implements ActionListener {
 	 * Checks which button is pressed and does appropriate action
 	 * call - TODO
 	 * edit - TODO
-	 * del - TODO
+	 * del - Delete currently selected record.
 	 * save - Write data to file and reset the text fields.
 	 * 
 	 * @param event The button that was clicked
@@ -145,17 +145,22 @@ public class Device extends JFrame implements ActionListener {
 				previousContact = IDLbl.getText() + getTxtFieldInfo();
 				break;
 				
+			// TODO
 			case "Finish edit":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
 				if (!isValidInput()) { return; } // Validate Input
-				//TODO: Breaks program
-				contacts.updateContact(previousContact, ID + getTxtFieldInfo());
+				deleteFromFile(previousContact);
+				write2File();
+				contacts.deleteBtn(IDLbl.getText() + ":" + nameTxt.getText());
+				contacts.newBtn(ID + ":" + nameTxt.getText());
+				ID ++;
 				break;
 				
 			case "Delete":
-				deleteFromFile(IDLbl.getText() + getTxtFieldInfo());
-				resetTxtFields(IDLbl.getText() + ":" + nameTxt.getText(), false);
+				String currentID = IDLbl.getText();
+				deleteFromFile(currentID + getTxtFieldInfo());
+				resetTxtFields(currentID + ":" + nameTxt.getText(), false);
 				break;
 			
 			case "Save":
@@ -174,7 +179,6 @@ public class Device extends JFrame implements ActionListener {
   }
   
 	/**
-	 * TODO: Call from everywhere or make new updateFile(LinkedList<>) {} ?????? -- see method below
 	 * Combine and write text field contents into file
 	 */
   private void write2File() {
