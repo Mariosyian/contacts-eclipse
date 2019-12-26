@@ -75,8 +75,6 @@ public class Device extends JFrame implements ActionListener {
 	    
 	  Container device = getContentPane();
 	  device.setLayout(mainGrid);
-
-	  IDLbl.setVisible(false);
 	  
 	  device.add(nameLabel);
 	  device.add(nameTxt);
@@ -98,6 +96,8 @@ public class Device extends JFrame implements ActionListener {
 	  device.add(callBtn);
 	  device.add(delBtn);
 	  
+	  device.add(IDLbl);
+	  
 	  saveBtn.addActionListener(this);
 	  callBtn.addActionListener(this);
 	  editBtn.addActionListener(this);
@@ -118,6 +118,7 @@ public class Device extends JFrame implements ActionListener {
 	 * edit - TODO
 	 * del - Delete currently selected record.
 	 * save - Write data to file and reset the text fields.
+	 * TODO: EnableTxtFields(false) now blocks Create new contact with save. Make Create -> Save?
 	 * 
 	 * @param event The button that was clicked
 	 */
@@ -141,30 +142,44 @@ public class Device extends JFrame implements ActionListener {
 			
 			case "Edit":
 				enableTxtFields(true);
-				editBtn.setText("Finish edit");
-				previousContact = IDLbl.getText() + getTxtFieldInfo();
+				editBtn.setText("Update");
+				previousContact = IDLbl.getText() + getContactInfo();
 				break;
 				
-			// TODO
-			case "Finish edit":
+			// TODO: Works first time only. After, leaves old button behind. Maybe sth to do with ID????
+			case "Update":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
-				if (!isValidInput()) { return; } // Validate Input
+				// Only update if info has been updated.
+				String currentInfo = IDLbl.getText() + getContactInfo();
+				if (currentInfo.equals(previousContact)) {
+					System.out.println("No updates occured ...");
+					return;
+				}
+				if (!isValidData()) { return; } // Validate Input
+				// Get index of data and update to new one
+				int index = contacts.getIndex(previousContact);
+				if (index == -1) {
+					System.err.println("Something went wrong while retrieving contact index...");
+					return;
+				}
+				System.out.println("Contact index: " + index);
+				contacts.updateContact(index, ID + getContactInfo());
+				// Update old one
+				contacts.updateBtn(index, ID + ":" + nameTxt.getText());
 				deleteFromFile(previousContact);
 				write2File();
-				contacts.deleteBtn(IDLbl.getText() + ":" + nameTxt.getText());
-				contacts.newBtn(ID + ":" + nameTxt.getText());
 				ID ++;
 				break;
 				
 			case "Delete":
 				String currentID = IDLbl.getText();
-				deleteFromFile(currentID + getTxtFieldInfo());
+				deleteFromFile(currentID + getContactInfo());
 				resetTxtFields(currentID + ":" + nameTxt.getText(), false);
 				break;
 			
 			case "Save":
-				if (!isValidInput()) { return; } // Validate Input
+				if (!isValidData()) { return; } // Validate Input
 				try {
 					write2File();
 				} catch (Exception e) {
@@ -184,7 +199,7 @@ public class Device extends JFrame implements ActionListener {
   private void write2File() {
   	try {
       fileWrite = new PrintWriter(new FileWriter(saveFile, true));
-      fileWrite.println(ID + getTxtFieldInfo());
+      fileWrite.println(ID + getContactInfo());
       fileWrite.close();
     } catch (FileNotFoundException e) {
       System.out.println("No such file found!");
@@ -226,11 +241,11 @@ public class Device extends JFrame implements ActionListener {
       System.out.println(e.getMessage());
     }
   }
+  
   /**
-   * TODO: Should I leave the ID here? Should I make new method one with getWithID and leave this as is?
    * @return String Returns all text field inputs as one ';' separated string WITHOUT ID.
    */
-  private String getTxtFieldInfo() {
+  private String getContactInfo() {
   	return ";" + nameTxt.getText() + ";" + phoneTxt.getText()  + ";" +
         emailTxt.getText()  + ";" + ageTxt.getText()  + ";" +
         cityTxt.getText()  + ";" + bdayTxt.getText()  + ";" +
@@ -289,7 +304,7 @@ public class Device extends JFrame implements ActionListener {
    * Occupation - Not null TODO: Should this be an optional entry?
    * @return boolean True if all checks pass, false otherwise.
    */
-  private boolean isValidInput() {
+  private boolean isValidData() {
   	// Name
   	if (getContactName().length() <= 0) {
   		System.err.println("Name can not be left null.");
@@ -489,7 +504,7 @@ public class Device extends JFrame implements ActionListener {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	  } 
 	  catch (Exception e) { 
-	  	System.out.println("Look and Feel not set"); 
+	  	System.err.println("Look and Feel not set"); 
 	  } 
 		Device device = new Device();
 		device.setVisible(true);

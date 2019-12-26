@@ -106,12 +106,11 @@ public class Contacts extends JFrame implements ActionListener{
     guiHeight += 35;
     this.setSize(guiWidth, guiHeight);    
     getContentPane().add(newButton);
-    
     // Read data file again to update DATA list
     try {
 			readFile(new File(FILENAME));
 		} catch (FileNotFoundException e) {
-			System.err.println("File: " + FILENAME + ". Was not found.");
+			System.err.println("File Not Found Error: " + FILENAME + " was not found or does not exist.");
 		}
   }
   
@@ -123,8 +122,8 @@ public class Contacts extends JFrame implements ActionListener{
 	{
     for (JButton button : BUTTONS) {
       if (button.getText().equals(name)) {
-        BUTTONS.remove(button);
         getContentPane().remove(button);
+        BUTTONS.remove(button);
         deleteContact(name);
         guiHeight -= 35;
         this.setSize(guiWidth, guiHeight);
@@ -132,6 +131,18 @@ public class Contacts extends JFrame implements ActionListener{
       }
     }	  
 	}
+	
+	/**
+   * Updates JButton object with specified name
+   * @param name New text of JButton
+   */
+	public void updateBtn(int index, String name)
+	{
+		JButton btn = BUTTONS.get(index);
+    btn.setText(name);
+		BUTTONS.set(index, btn);
+	}
+	
   private void readFile(File data) throws FileNotFoundException {
     BufferedReader read = new BufferedReader(new FileReader(data));
     String line = "";
@@ -165,7 +176,6 @@ public class Contacts extends JFrame implements ActionListener{
 				e.printStackTrace();
 			}
     }
-    
     try {
     	read.close();
     } catch (IOException e) {
@@ -188,5 +198,29 @@ public class Contacts extends JFrame implements ActionListener{
         break;
       }
     }
+  }
+  
+  /**
+   * Update a contact record from the list.
+   * @param contact Contact to be updated
+   */
+  public void updateContact(int index, String contact) {
+  	System.out.println("Before:" + DATA);
+  	DATA.set(index, contact);
+  	System.out.println("After:" + DATA);
+  	//TODO: Update button
+  	String[] split = contact.split(";");
+  	JButton btn = BUTTONS.get(index);
+  	btn.setText(split[0] + ":" + split[1]);
+  	BUTTONS.set(index, btn);
+  }
+  
+  /**
+   * Get index of record in list.
+   * @param contact Record to be found.
+   * @return int Index of record if found, -1 otherwise.
+   */
+  public int getIndex(String contact) {
+  	return DATA.indexOf(contact);
   }
 }
