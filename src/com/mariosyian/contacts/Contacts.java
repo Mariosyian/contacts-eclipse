@@ -205,10 +205,7 @@ public class Contacts extends JFrame implements ActionListener{
    * @param contact Contact to be updated
    */
   public void updateContact(int index, String contact) {
-  	System.out.println("Before:" + DATA);
   	DATA.set(index, contact);
-  	System.out.println("After:" + DATA);
-  	//TODO: Update button
   	String[] split = contact.split(";");
   	JButton btn = BUTTONS.get(index);
   	btn.setText(split[0] + ":" + split[1]);

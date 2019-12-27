@@ -33,7 +33,7 @@ public class Device extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private static int ID = 0;
-	 
+
 	/*----------Widgets----------*/
 	  // Labels
 	private JLabel nameLabel = new JLabel("Name:");
@@ -96,8 +96,6 @@ public class Device extends JFrame implements ActionListener {
 	  device.add(callBtn);
 	  device.add(delBtn);
 	  
-	  device.add(IDLbl);
-	  
 	  saveBtn.addActionListener(this);
 	  callBtn.addActionListener(this);
 	  editBtn.addActionListener(this);
@@ -115,10 +113,10 @@ public class Device extends JFrame implements ActionListener {
 	/**
 	 * Checks which button is pressed and does appropriate action
 	 * call - TODO
-	 * edit - TODO
+	 * edit - Makes text fields editable. Updates when clicked again.
 	 * del - Delete currently selected record.
 	 * save - Write data to file and reset the text fields.
-	 * TODO: EnableTxtFields(false) now blocks Create new contact with save. Make Create -> Save?
+	 * TODO: EnableTxtFields(false) now blocks Create new contact with save. Make new button Create and Save?
 	 * 
 	 * @param event The button that was clicked
 	 */
@@ -146,7 +144,7 @@ public class Device extends JFrame implements ActionListener {
 				previousContact = IDLbl.getText() + getContactInfo();
 				break;
 				
-			// TODO: Works first time only. After, leaves old button behind. Maybe sth to do with ID????
+			// TODO: Some bugs still exist. After new Save.
 			case "Update":
 				enableTxtFields(false);
 				editBtn.setText("Edit");
